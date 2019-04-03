@@ -16,6 +16,14 @@ package cc.ofxarcorelib;
 
 import android.app.Activity;
 import android.content.Context;
+import android.hardware.camera2.CameraAccessException;
+import android.hardware.camera2.CameraCharacteristics;
+import android.hardware.camera2.CameraManager;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
+import android.util.DisplayMetrics;
+import android.util.Log;
+import android.util.SizeF;
 import android.view.Surface;
 import android.widget.Toast;
 
@@ -62,8 +70,32 @@ public class ofxARCoreLib extends OFAndroidObject {
 	private Pose mPose;
 	private ArrayList<Anchor> mAnchors = new ArrayList<>();
 
+
+	// boehm-e
+	public float horizontalAngle;
+	public float verticalAngle;
+	public float screenDpi;
+
+
 	public void setup(int texId, final int width, final int height){
 		Context context = OFAndroid.getContext();
+
+		// boehm-e
+		// calculate camera fov
+
+		CameraManager manager = (CameraManager) context.getSystemService(Context.CAMERA_SERVICE);
+		calculateFOV(manager);
+		Log.d("DEBUG_ERWAN", "h : " + horizontalAngle + "      w : " + verticalAngle);
+
+		// calculate dpi
+		DisplayMetrics displaymetrics = new DisplayMetrics();
+
+		activity.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+
+		screenDpi = context.getResources().getDisplayMetrics().xdpi;
+		Log.d("DEBUG_ERWAN", "dpi : " + screenDpi);
+
+
 
 		mTexId = texId;
 
@@ -210,6 +242,53 @@ public class ofxARCoreLib extends OFAndroidObject {
 	private void updateTexture(){
 		mSession.setCameraTextureName(mTexId);
 	}
+
+
+
+
+
+	//	boehm-e
+	@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+	private void calculateFOV(CameraManager cManager) {
+		try {
+			for (final String cameraId : cManager.getCameraIdList()) {
+				CameraCharacteristics characteristics = cManager.getCameraCharacteristics(cameraId);
+				int cOrientation = characteristics.get(CameraCharacteristics.LENS_FACING);
+				if (cOrientation == CameraCharacteristics.LENS_FACING_BACK) {
+					float[] maxFocus = characteristics.get(CameraCharacteristics.LENS_INFO_AVAILABLE_FOCAL_LENGTHS);
+					SizeF size = characteristics.get(CameraCharacteristics.SENSOR_INFO_PHYSICAL_SIZE);
+					float w = size.getWidth();
+					float h = size.getHeight();
+					horizontalAngle = w;
+//					horizontalAngle = (float) (2*Math.atan(w/(maxFocus[0]*2)));
+					verticalAngle = (float) (2*Math.atan(h/(maxFocus[0]*2)));
+				}
+			}
+		} catch (CameraAccessException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public float getFOV() {
+		Log.d("ofxARCoreLib.java", "HORIZONTAL FOV : " + horizontalAngle);
+		float fov = (float) horizontalAngle;
+
+		return fov;
+//		return horizontalAngle;
+	}
+
+	public float getDPI() {
+		Log.d("ofxARCoreLib.java", "SCREEN DPI : " + screenDpi);
+
+		float dpi = (float) screenDpi;
+
+		return dpi;
+	}
+
+
+
+
+
 
 	@Override
 	protected void appPause() {

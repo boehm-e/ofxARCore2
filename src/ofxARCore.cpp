@@ -187,11 +187,32 @@ bool ofxARCore::isInitialized(){
 }
 
 float ofxARCore::getCameraFOV() {
-    return 0.5f;
+
+    JNIEnv *env = ofGetJNIEnv();
+	jmethodID javaGetFovMethod = env->GetMethodID(javaClass,"getFOV","()F");
+	if(!javaGetFovMethod){
+		ofLogError("javaGetFovMethod") << "javaGetFovMethod(): couldn't get java";
+		return false;
+	}
+	jfloat fov = env->CallFloatMethod (javaTango, javaGetFovMethod);
+    ofLog() << "FOVVV " << fov;
+
+    return fov;
 }
 
 float ofxARCore::getDpi() {
-    return 500.0f;
+
+    JNIEnv *env = ofGetJNIEnv();
+	jmethodID javaGetDpiMethod = env->GetMethodID(javaClass,"getDPI","()F");
+	if(!javaGetDpiMethod){
+		ofLogError("javaGetDpiMethod ") << "javaGetDpiMethod (): couldn't get java";
+		return false;
+	}
+	jfloat dpi = env->CallFloatMethod (javaTango, javaGetDpiMethod);
+    ofLog() << "DPI " << dpi;
+
+    return dpi;
+
 }
 
 bool ofxARCore::isTracking(){
