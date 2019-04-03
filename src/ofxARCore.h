@@ -38,6 +38,10 @@ public:
     bool isInitialized();
 	bool isTracking();
 
+    // boehm-e
+	float getCameraFOV();
+    float getDpi();
+
     void update();
     void draw();
 

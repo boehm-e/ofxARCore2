@@ -186,6 +186,14 @@ bool ofxARCore::isInitialized(){
     return env->CallBooleanMethod(javaTango, method);
 }
 
+float ofxARCore::getCameraFOV() {
+    return 0.5f;
+}
+
+float ofxARCore::getDpi() {
+    return 500.0f;
+}
+
 bool ofxARCore::isTracking(){
     JNIEnv *env = ofGetJNIEnv();
     jmethodID method = env->GetMethodID(javaClass,"isTracking","()Z");
