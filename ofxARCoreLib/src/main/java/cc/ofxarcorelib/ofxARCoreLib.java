@@ -33,6 +33,7 @@ import com.google.ar.core.Frame;
 import com.google.ar.core.Pose;
 import com.google.ar.core.Session;
 import com.google.ar.core.TrackingState;
+import com.google.ar.core.PointCloud;
 import com.google.ar.core.exceptions.CameraNotAvailableException;
 import com.google.ar.core.exceptions.NotTrackingException;
 import com.google.ar.core.exceptions.UnavailableApkTooOldException;
@@ -76,6 +77,11 @@ public class ofxARCoreLib extends OFAndroidObject {
 	public float verticalAngle;
 	public float screenDpi;
 
+	// point cloud
+	private PointCloud pointcloud_data = null;
+	private FloatBuffer pcloud_buffer;
+	private float[] pcloud_array;
+
 
 	public void setup(int texId, final int width, final int height){
 		Context context = OFAndroid.getContext();
@@ -85,7 +91,6 @@ public class ofxARCoreLib extends OFAndroidObject {
 
 		CameraManager manager = (CameraManager) context.getSystemService(Context.CAMERA_SERVICE);
 		calculateFOV(manager);
-		Log.d("DEBUG_ERWAN", "h : " + horizontalAngle + "      w : " + verticalAngle);
 
 		// calculate dpi
 		DisplayMetrics displaymetrics = new DisplayMetrics();
@@ -93,7 +98,6 @@ public class ofxARCoreLib extends OFAndroidObject {
 		activity.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
 
 		screenDpi = context.getResources().getDisplayMetrics().xdpi;
-		Log.d("DEBUG_ERWAN", "dpi : " + screenDpi);
 
 
 
@@ -160,7 +164,13 @@ public class ofxARCoreLib extends OFAndroidObject {
 		return mViewMatrix;
 	}
 
-	public float[] getProjectionMatrix(float near, float far){
+    /* point cloud and plane @kashimAstro */
+    public float[] getPointCloud()
+    {
+        return pcloud_array;
+    }
+
+    public float[] getProjectionMatrix(float near, float far){
 		if(mIsReady) {
 			try {
 				mSession.update().getCamera().getProjectionMatrix(mProjectionMatrix, 0, near, far);
@@ -222,6 +232,13 @@ public class ofxARCoreLib extends OFAndroidObject {
 
 			mPose = frame.getCamera().getPose();
 			frame.getCamera().getViewMatrix(mViewMatrix, 0);
+
+
+            /* point cloud @kashimAstro */
+            pointcloud_data = frame.acquirePointCloud();
+            pcloud_buffer   = pointcloud_data.getPoints();
+            pcloud_array 	=  new float[pcloud_buffer.limit()];
+            pcloud_buffer.get(pcloud_array);
 
 			mIsReady = true;
 

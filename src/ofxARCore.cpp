@@ -200,6 +200,20 @@ float ofxARCore::getCameraFOV() {
     return fov;
 }
 
+/* point cloud and plane */
+std::vector<float> ofxARCore::getPointCloud() {
+    JNIEnv *env = ofGetJNIEnv();
+    jfloatArray data = (jfloatArray) env->CallObjectMethod(javaTango,
+                                                           env->GetMethodID(javaClass,"getPointCloud","()[F"));
+
+    jsize size = env->GetArrayLength(data);
+    std::vector<float> result;
+    result.resize((int)size);
+    env->GetFloatArrayRegion(data, 0, size, (jfloat*)&result[0]);
+    return result;
+}
+
+
 float ofxARCore::getDpi() {
 
     JNIEnv *env = ofGetJNIEnv();

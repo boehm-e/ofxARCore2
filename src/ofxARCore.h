@@ -54,6 +54,8 @@ public:
     ofMatrix4x4 getViewMatrix();
     ofMatrix4x4 getProjectionMatrix(float near=0.1f, float far=100.0f);
 
+    std::vector<float> getPointCloud();     /* get point cloud arcore */
+
     ofTexture texture;
 
 private:
