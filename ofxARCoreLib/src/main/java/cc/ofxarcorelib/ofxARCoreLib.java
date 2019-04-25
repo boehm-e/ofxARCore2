@@ -110,6 +110,7 @@ public class ofxARCoreLib extends OFAndroidObject {
 
 				try {
 					mSession = new Session((Activity) context);
+
 				} catch (UnavailableArcoreNotInstalledException e) {
 					e.printStackTrace();
 				} catch (UnavailableApkTooOldException e) {
@@ -122,6 +123,7 @@ public class ofxARCoreLib extends OFAndroidObject {
 
 				// Create default config, check is supported, create session from that config.
 				mDefaultConfig =  new Config(mSession);
+				mDefaultConfig.setFocusMode(Config.FocusMode.AUTO);
 				if (!mSession.isSupported(mDefaultConfig)) {
 					Toast.makeText(context, "This device does not support AR", Toast.LENGTH_LONG).show();
 					return;
