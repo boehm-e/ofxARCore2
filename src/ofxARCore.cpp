@@ -137,6 +137,16 @@ GLuint ofxARCore::setupTexture(){
     return texId[0];
 }
 
+void ofxARCore::reloadTexture() {
+    GLuint texId = setupTexture();
+    JNIEnv *env = ofGetJNIEnv();
+    jmethodID javaSetupMethod = env->GetMethodID(javaClass, "setup2", "(I)V");
+    if (!javaSetupMethod) {
+        ofLogError("ofxARCore") << "setup(): couldn't get java setup for ofxARCore";
+        return;
+    }
+    env->CallVoidMethod(javaTango, javaSetupMethod, texId);
+}
 
 void ofxARCore::pauseApp(){
     JNIEnv *env = ofGetJNIEnv();
@@ -144,6 +154,8 @@ void ofxARCore::pauseApp(){
 }
 
 void ofxARCore::resumeApp(){
+    reloadTexture();
+
     JNIEnv *env = ofGetJNIEnv();
     env->CallVoidMethod(javaTango, env->GetMethodID(javaClass, "appResume", "()V"));
 
@@ -282,6 +294,8 @@ ofMatrix4x4 ofxARCore::getAnchor(int i){
     m.set(body);
     return m;
 }
+
+
 
 
 #endif

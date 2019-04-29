@@ -214,6 +214,12 @@ public class ofxARCoreLib extends OFAndroidObject {
 		return false;
 	}
 
+	public void setup2(int texId){    // this could have a better name
+		mTexId = texId;
+		updateTexture();
+	}
+
+
 	public void update(){
 		if(mSession == null) return;
 

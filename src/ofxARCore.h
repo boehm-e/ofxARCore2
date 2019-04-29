@@ -47,6 +47,7 @@ public:
 
     void pauseApp();
     void resumeApp();
+	void reloadTexture();
 
     void addAnchor();
     ofMatrix4x4 getAnchor(int i=0);

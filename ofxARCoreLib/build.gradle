@@ -14,6 +14,7 @@ allprojects {
         maven {
             url 'https://dl.google.com/dl/android/maven2/'
         }
+
     }
 }
 apply plugin: 'com.android.model.library'
@@ -43,6 +44,8 @@ dependencies {
 
     compile 'com.android.support:recyclerview-v7:22.1.1'
     compile 'com.android.support:cardview-v7:22.1.1'
+
+    compile 'com.thebluealliance:spectrum:0.7.1'
 
     compile project(path: ':ofAndroidLib')
 }
