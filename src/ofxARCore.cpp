@@ -154,7 +154,9 @@ void ofxARCore::pauseApp(){
 }
 
 void ofxARCore::resumeApp(){
-    reloadTexture();
+//    reloadTexture();
+
+    setupSession();
 
     JNIEnv *env = ofGetJNIEnv();
     env->CallVoidMethod(javaTango, env->GetMethodID(javaClass, "appResume", "()V"));
