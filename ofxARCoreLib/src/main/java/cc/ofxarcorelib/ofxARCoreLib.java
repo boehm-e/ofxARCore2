@@ -112,12 +112,16 @@ public class ofxARCoreLib extends OFAndroidObject {
 					mSession = new Session((Activity) context);
 
 				} catch (UnavailableArcoreNotInstalledException e) {
+					Log.d("DEBUG ERWAN", "ERROR UnavailableArcoreNotInstalledException");
 					e.printStackTrace();
 				} catch (UnavailableApkTooOldException e) {
+					Log.d("DEBUG ERWAN", "ERROR UnavailableApkTooOldException");
 					e.printStackTrace();
 				} catch (UnavailableSdkTooOldException e) {
+					Log.d("DEBUG ERWAN", "ERROR UnavailableSdkTooOldException");
 					e.printStackTrace();
 				} catch (UnavailableDeviceNotCompatibleException e) {
+					Log.d("DEBUG ERWAN", "ERROR UnavailableDeviceNotCompatibleException");
 					e.printStackTrace();
 				}
 
