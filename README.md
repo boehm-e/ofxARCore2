@@ -147,8 +147,8 @@ void AugmentedImage::draw() {
 ```
 
 ### Utils
-```cpp
 #### Camera FOV
+```cpp
 // ofApp.cpp
 
 arcore.getCameraFOV();
