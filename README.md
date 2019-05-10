@@ -3,11 +3,12 @@ Experimental addon for openFrameworks to use [ARCore](https://developers.google.
 <div style="position: relative; width: 90%;  margin-left:5%; margin-right: 5%;display: flex; justify-content: center; float: left;">
     <img align="left" src=".img/demo.gif" style="padding-left:1%; padding-right:1%" alt="Made with Angular" title="Angular"  width="45%" />
     <img align="left" src=".img/demo.webp" style="padding-left:1%; padding-right:1%" alt="Made with Bootstrap" title="Bootstrap"  width="50%" />
+    <div style="position: absolute; min-width: 100%; display: flex; bottom:0; left: 0;">
+    <a href="https://play.google.com/store/apps/details?id=cc.openframeworks.ardrawing"><img src=".img/dl.png" align="left"  width="400"></a>
+    </div>
+
   </div>
 
-<div style="position: relative; width: 100%; display: flex;">
-<a href="https://play.google.com/store/apps/details?id=cc.openframeworks.ardrawing"><img src=".img/dl.png" align="left"  width="200" ></a>
-</div>
 
 
 
