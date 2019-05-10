@@ -28,14 +28,14 @@ To add the addon, add `ofxARCore` to `addons.make` in your project, or through t
 ### Anchor
 
 ```h
-# ofApp.h
+// ofApp.h
 
 ofxARCore arcore;
 vector<ofMatrix4x4> anchors;
 ```
 
 ```cpp
-# ofApp.cpp
+// ofApp.cpp
 
 void ofApp::setup() {
   arcore.setup();
@@ -69,14 +69,14 @@ void RafalleApp::draw() {
 ### Point Cloud
 
 ```h
-# ofApp.h
+// ofApp.h
 
 vector<float> point_cloud;
 ofVbo vbo_pointcloud;
 ```
 
 ```cpp
-# ofApp.cpp
+// ofApp.cpp
 
 void ofApp::setup() {
     for(int i = 0; i < point_cloud.size(); i++) {
@@ -111,7 +111,7 @@ for (int i = 0; i < points.size(); i+=3) {
 
 ### Augmented Images
 ```cpp
-# ofApp.cpp
+// ofApp.cpp
 
 void AugmentedImage::draw() {
 
@@ -149,13 +149,13 @@ void AugmentedImage::draw() {
 ### Utils
 ```cpp
 #### Camera FOV
-# ofApp.cpp
+// ofApp.cpp
 
 arcore.getCameraFOV();
 ```
 #### Screen DPI
 ```cpp
-# ofApp.cpp
+// ofApp.cpp
 
 arcore.getDpi();
 ```
