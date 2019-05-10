@@ -1,4 +1,4 @@
-<a href="https://play.google.com/store/apps/details?id=cc.openframeworks.ardrawing">
+<a href="https://play.google.com/store/apps/details?id=cc.openframeworks.ardrawing"  target="_blank">
   <img src=".img/dl.png" width="200"/>
 </a>
 
