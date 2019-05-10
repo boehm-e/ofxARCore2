@@ -5,8 +5,8 @@ Experimental addon for openFrameworks to use [ARCore](https://developers.google.
     <img align="left" src=".img/demo.webp" style="padding-left:1%; padding-right:1%" alt="Made with Bootstrap" title="Bootstrap"  width="50%" />
   </div>
 <div style="position: relative; display: inline-block; width=100%;">
-  <a href="https://play.google.com/store/apps/details?id=cc.openframeworks.ardrawing">
-    <img src=".img/dl.png" style="margin-left: auto; margin-right: auto; display: block; width: 300px;" />
+  <a style="margin-left: auto; margin-right: auto; display: block; width: 300px;" href="https://play.google.com/store/apps/details?id=cc.openframeworks.ardrawing">
+    <img style="margin-left: auto; margin-right: auto; display: block; width: 300px;" src=".img/dl.png"  />
   </a>
 </div>
 
