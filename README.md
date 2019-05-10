@@ -132,7 +132,7 @@ void AugmentedImage::draw() {
 
             // set box dimentions according to arcore image width estimation
             box.set(augmented_images[i]->width, 0.01, augmented_images[i]->height);
-            box.setPosition(0,-depth/2,0);
+            box.setPosition(0,0,0);
 
             // draw box above the image
             box.draw();
