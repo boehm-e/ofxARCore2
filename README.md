@@ -3,7 +3,8 @@ Experimental addon for openFrameworks to use [ARCore](https://developers.google.
 
 <img src="demo.gif" alt="alt text"  style="display: block; float: left;" width="auto" height="500px">
 
-<img src="demo.webp" alt="alt text"  style="display: block;" width="auto" height="500px">
+
+<img src="demo.webp" alt="alt text"  style="display: block; float: left;" width="auto" height="500px">
 
 
 [download this app](https://play.google.com/store/apps/details?id=cc.openframeworks.ardrawing)
