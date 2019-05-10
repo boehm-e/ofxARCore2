@@ -16,6 +16,8 @@ package cc.ofxarcorelib;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraManager;
@@ -28,6 +30,8 @@ import android.view.Surface;
 import android.widget.Toast;
 
 import com.google.ar.core.Anchor;
+import com.google.ar.core.AugmentedImage;
+import com.google.ar.core.AugmentedImageDatabase;
 import com.google.ar.core.Config;
 import com.google.ar.core.Frame;
 import com.google.ar.core.Pose;
@@ -44,10 +48,14 @@ import com.google.ar.core.exceptions.UnavailableSdkTooOldException;
 import cc.openframeworks.OFAndroid;
 import cc.openframeworks.OFAndroidObject;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
+import java.util.Collection;
 
 public class ofxARCoreLib extends OFAndroidObject {
 	private static final String TAG = "ofxARCoreLib";
@@ -65,6 +73,7 @@ public class ofxARCoreLib extends OFAndroidObject {
 	private float[] mViewMatrix = new float[16];
 	private float[] mProjectionMatrix = new float[16];
 	private float[] mAnchorMatrix = new float[16];
+	private ArrayList<float[]>  augImg_matrices = new ArrayList<float[]>();// = new float[16];
 
 	private TrackingState mTrackingState = TrackingState.STOPPED;
 
@@ -85,6 +94,7 @@ public class ofxARCoreLib extends OFAndroidObject {
 
 	public void setup(int texId, final int width, final int height){
 		Context context = OFAndroid.getContext();
+
 
 		// boehm-e
 		// calculate camera fov
@@ -127,11 +137,23 @@ public class ofxARCoreLib extends OFAndroidObject {
 
 				// Create default config, check is supported, create session from that config.
 				mDefaultConfig =  new Config(mSession);
-				mDefaultConfig.setFocusMode(Config.FocusMode.AUTO);
 				if (!mSession.isSupported(mDefaultConfig)) {
 					Toast.makeText(context, "This device does not support AR", Toast.LENGTH_LONG).show();
 					return;
 				}
+
+				// boehm-e AugmentedImageDatabase
+				AugmentedImageDatabase db = createAugmentedImageDatabase();
+				for (int i=0; i<db.getNumImages(); i++) {
+					float[] new_matrix = new float[20];
+					new_matrix[18] = i;
+					new_matrix[19] = 0; // NOT TRACKING
+					augImg_matrices.add(new_matrix);
+				}
+				mDefaultConfig.setAugmentedImageDatabase(db);
+				// boehm-e Set Auto Focus
+				mDefaultConfig.setFocusMode(Config.FocusMode.AUTO);
+
 				mSession.configure(mDefaultConfig);
 
 				mSession.setCameraTextureName(mTexId);
@@ -170,13 +192,22 @@ public class ofxARCoreLib extends OFAndroidObject {
 		return mViewMatrix;
 	}
 
-    /* point cloud and plane @kashimAstro */
-    public float[] getPointCloud()
-    {
-        return pcloud_array;
-    }
+	public float[][] getImageMatrices(){
+		int size = augImg_matrices.size();
+		float [][] matrices = new float[size][16];
+		for (int i = 0; i<size; i++) {
+			matrices[i] = augImg_matrices.get(i);
+		}
+		return matrices;
+	}
 
-    public float[] getProjectionMatrix(float near, float far){
+	/* point cloud and plane @kashimAstro */
+	public float[] getPointCloud()
+	{
+		return pcloud_array;
+	}
+
+	public float[] getProjectionMatrix(float near, float far){
 		if(mIsReady) {
 			try {
 				mSession.update().getCamera().getProjectionMatrix(mProjectionMatrix, 0, near, far);
@@ -223,6 +254,9 @@ public class ofxARCoreLib extends OFAndroidObject {
 		updateTexture();
 	}
 
+	private String toHex(String arg) {
+		return String.format("%040x", new BigInteger(1, arg.getBytes(/*YOUR_CHARSET?*/)));
+	}
 
 	public void update(){
 		if(mSession == null) return;
@@ -246,15 +280,48 @@ public class ofxARCoreLib extends OFAndroidObject {
 			frame.getCamera().getViewMatrix(mViewMatrix, 0);
 
 
+
             /* point cloud @kashimAstro */
-            pointcloud_data = frame.acquirePointCloud();
-            pcloud_buffer   = pointcloud_data.getPoints();
-            pcloud_array 	=  new float[pcloud_buffer.limit()];
-            pcloud_buffer.get(pcloud_array);
+			pointcloud_data = frame.acquirePointCloud();
+			pcloud_buffer   = pointcloud_data.getPoints();
+			pcloud_array 	=  new float[pcloud_buffer.limit()];
+			pcloud_buffer.get(pcloud_array);
 
 			mIsReady = true;
 
 //			final float lightIntensity = frame.getLightEstimate().getPixelIntensity();
+
+			// AugmentedImageDatabase boehm-e
+
+			Collection<AugmentedImage> updatedAugmentedImages =
+					frame.getUpdatedTrackables(AugmentedImage.class);
+
+
+			int index = 0;
+			for (AugmentedImage img : updatedAugmentedImages) {
+				if (img.getTrackingState() == TrackingState.TRACKING && img.getTrackingMethod() == AugmentedImage.TrackingMethod.FULL_TRACKING) {
+					String name = img.getName();
+					Pose pose = img.getCenterPose();
+					float width = img.getExtentX();
+					float height = img.getExtentZ();
+					float[] new_matrix = new float[20];
+					pose.toMatrix(new_matrix, 0);
+					new_matrix[16] = width;
+					new_matrix[17] = height;
+					new_matrix[18] = img.getIndex();
+					new_matrix[19] = 1; // tracking
+					augImg_matrices.set(img.getIndex(), new_matrix);
+
+				} else {
+
+					float[] new_matrix = new float[20];
+					new_matrix[18] = img.getIndex();
+					new_matrix[19] = 0; // NOT TRACKING
+					augImg_matrices.set(img.getIndex(), new_matrix);
+				}
+				index++;
+			}
+
 
 		} catch (Throwable e) {
 			e.printStackTrace();
@@ -314,6 +381,29 @@ public class ofxARCoreLib extends OFAndroidObject {
 		return dpi;
 	}
 
+
+	// boehm_e AugmentedImageDatabase
+	public AugmentedImageDatabase createAugmentedImageDatabase() {
+		AugmentedImageDatabase imageDatabase = new AugmentedImageDatabase(this.mSession);
+		Bitmap bitmap;
+
+
+		try {
+			for(String imgName : OFAndroid.getContext().getAssets().list("AugmentedImageDatabase")){
+				String imgPath = "AugmentedImageDatabase/"+imgName;
+				InputStream inputStream = OFAndroid.getContext().getAssets().open(imgPath);
+				bitmap = BitmapFactory.decodeStream(inputStream);
+				int index = imageDatabase.addImage(imgName, bitmap);
+
+				Log.d("DEBUG ERWAN", "ADDED IMAGE : "+imgPath);
+			}
+		} catch (IOException e) {
+			Log.d("DEBUG ERWAN", "fail to load image");
+			e.printStackTrace();
+		}
+
+		return imageDatabase;
+	}
 
 
 

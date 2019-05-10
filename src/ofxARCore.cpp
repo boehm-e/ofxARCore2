@@ -64,6 +64,9 @@ void ofxARCore::setup(){
     _sessionInitialized = false;
 
 
+    std::string path = "AugmentedImageDatabase";
+    arcoreImagesDir = new ofDirectory(path);
+
     ofxAndroidRequestPermission(OFX_ANDROID_PERMISSION_CAMERA);
     // Request camera permissions
     if(ofxAndroidCheckPermission(OFX_ANDROID_PERMISSION_CAMERA)) {
@@ -154,9 +157,9 @@ void ofxARCore::pauseApp(){
 }
 
 void ofxARCore::resumeApp(){
-//    reloadTexture();
 
     setupSession();
+    reloadTexture();
 
     JNIEnv *env = ofGetJNIEnv();
     env->CallVoidMethod(javaTango, env->GetMethodID(javaClass, "appResume", "()V"));
@@ -177,7 +180,7 @@ void ofxARCore::update(){
 
     // Check if textureUVs are marked dirty
     bool textureUvDirty =  env->CallBooleanMethod(javaTango,
-                                               env->GetMethodID(javaClass, "textureUvDirty", "()Z"));
+                                                  env->GetMethodID(javaClass, "textureUvDirty", "()Z"));
 
     if(textureUvDirty){
         jmethodID method = env->GetMethodID(javaClass, "getTextureUv", "()[F");
@@ -203,12 +206,12 @@ bool ofxARCore::isInitialized(){
 float ofxARCore::getCameraFOV() {
 
     JNIEnv *env = ofGetJNIEnv();
-	jmethodID javaGetFovMethod = env->GetMethodID(javaClass,"getFOV","()F");
-	if(!javaGetFovMethod){
-		ofLogError("javaGetFovMethod") << "javaGetFovMethod(): couldn't get java";
-		return false;
-	}
-	jfloat fov = env->CallFloatMethod (javaTango, javaGetFovMethod);
+    jmethodID javaGetFovMethod = env->GetMethodID(javaClass,"getFOV","()F");
+    if(!javaGetFovMethod){
+        ofLogError("javaGetFovMethod") << "javaGetFovMethod(): couldn't get java";
+        return false;
+    }
+    jfloat fov = env->CallFloatMethod (javaTango, javaGetFovMethod);
     ofLog() << "FOVVV " << fov;
 
     return fov;
@@ -231,12 +234,12 @@ std::vector<float> ofxARCore::getPointCloud() {
 float ofxARCore::getDpi() {
 
     JNIEnv *env = ofGetJNIEnv();
-	jmethodID javaGetDpiMethod = env->GetMethodID(javaClass,"getDPI","()F");
-	if(!javaGetDpiMethod){
-		ofLogError("javaGetDpiMethod ") << "javaGetDpiMethod (): couldn't get java";
-		return false;
-	}
-	jfloat dpi = env->CallFloatMethod (javaTango, javaGetDpiMethod);
+    jmethodID javaGetDpiMethod = env->GetMethodID(javaClass,"getDPI","()F");
+    if(!javaGetDpiMethod){
+        ofLogError("javaGetDpiMethod ") << "javaGetDpiMethod (): couldn't get java";
+        return false;
+    }
+    jfloat dpi = env->CallFloatMethod (javaTango, javaGetDpiMethod);
     ofLog() << "DPI " << dpi;
 
     return dpi;
@@ -259,6 +262,36 @@ ofMatrix4x4 ofxARCore::getViewMatrix(){
     ofMatrix4x4 m;
     m.set(body);
     return m;
+}
+
+//ofMatrix4x4 ofxARCore::getImageMatrix(){
+std::vector<ofAugmentedImage*> ofxARCore::getImageMatrices(){
+
+    std::vector<ofAugmentedImage*> matrices;
+
+    JNIEnv *env = ofGetJNIEnv();
+    jobjectArray objArray = (jobjectArray) env->CallObjectMethod(javaTango, env->GetMethodID(javaClass, "getImageMatrices", "()[[F"));
+
+    int arraySize = env->GetArrayLength(objArray);
+    for (int i=0; i < arraySize; i++)
+    {
+        jboolean isCopy;
+        jobject array = env->GetObjectArrayElement(objArray, i);
+
+        jfloat *body =  env->GetFloatArrayElements((jfloatArray)array, &isCopy);
+        ofMatrix4x4 m;
+        m.set(body);
+
+        int index = body[18];
+
+        std::string name = ofSplitString(arcoreImagesDir->getSorted().getPath(index), "/")[1];
+
+        int is_tracking = body[19];
+        bool tracking = is_tracking == 1;
+        matrices.push_back(new ofAugmentedImage{m, body[16], body[17], index, tracking, name});
+
+    }
+    return matrices;
 }
 
 ofMatrix4x4 ofxARCore::getProjectionMatrix(float near, float far){
