@@ -1,8 +1,8 @@
 # ofxARCore
 Experimental addon for openFrameworks to use [ARCore](https://developers.google.com/ar) on Android devices.
 
-<img align="left" src="demo.gif" alt="Made with Angular" title="Angular" width="45%" />
-<img align="left" src="demo.webp" alt="Made with Bootstrap" title="Bootstrap" width="45%" />
+<img align="left" src="demo.gif" alt="Made with Angular" title="Angular" style="margin-left:2%" width="45%" />
+<img align="left" src="demo.webp" alt="Made with Bootstrap" title="Bootstrap" style="margin-left:2%" width="45%" />
 
 
 
