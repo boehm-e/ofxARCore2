@@ -1,10 +1,8 @@
 # ofxARCore
 Experimental addon for openFrameworks to use [ARCore](https://developers.google.com/ar) on Android devices.
 
-![preview](preview.gif =x1000)
-![preview2](demo.webp =x1000)
-![preview3](preview.gif)
-![preview4](demo.webp)
+![preview](preview.gif =x500)
+![preview2](demo.webp =x500)
 [download this app](https://play.google.com/store/apps/details?id=cc.openframeworks.ardrawing)
 
 ## About
