@@ -1,4 +1,4 @@
-<a href="https://play.google.com/store/apps/details?id=cc.openframeworks.ardrawing"  target="_blank">
+<a href="https://play.google.com/store/apps/details?id=cc.openframeworks.ardrawing">
   <img src=".img/dl.png" width="200"/>
 </a>
 
@@ -28,11 +28,15 @@ To add the addon, add `ofxARCore` to `addons.make` in your project, or through t
 ### Anchor
 
 ```h
+# ofApp.h
+
 ofxARCore arcore;
 vector<ofMatrix4x4> anchors;
 ```
 
 ```cpp
+# ofApp.cpp
+
 void ofApp::setup() {
   arcore.setup();
 }
@@ -65,11 +69,15 @@ void RafalleApp::draw() {
 ### Point Cloud
 
 ```h
+# ofApp.h
+
 vector<float> point_cloud;
 ofVbo vbo_pointcloud;
 ```
 
 ```cpp
+# ofApp.cpp
+
 void ofApp::setup() {
     for(int i = 0; i < point_cloud.size(); i++) {
         point_color.push_back(ofColor::red);
@@ -103,6 +111,8 @@ for (int i = 0; i < points.size(); i+=3) {
 
 ### Augmented Images
 ```cpp
+# ofApp.cpp
+
 void AugmentedImage::draw() {
 
     vector<ofAugmentedImage*> augmented_images = arcore->getImageMatrices();
@@ -139,9 +149,13 @@ void AugmentedImage::draw() {
 ### Utils
 ```cpp
 #### Camera FOV
+# ofApp.cpp
+
 arcore.getCameraFOV();
 ```
 #### Screen DPI
 ```cpp
+# ofApp.cpp
+
 arcore.getDpi();
 ```
