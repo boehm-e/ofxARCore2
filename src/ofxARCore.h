@@ -42,7 +42,7 @@ public:
     ofxARCore();
     ~ofxARCore();
 
-    void setup();
+    void setup(bool enableAugmentedImages);
 
     bool isInitialized();
 	bool isTracking();
@@ -79,6 +79,7 @@ private:
     ofDirectory *arcoreImagesDir;
 
     bool _sessionInitialized;
+	bool enableAugmentedImages;
 };
 
 #endif

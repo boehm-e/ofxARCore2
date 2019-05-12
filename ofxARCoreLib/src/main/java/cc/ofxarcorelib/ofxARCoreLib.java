@@ -91,9 +91,17 @@ public class ofxARCoreLib extends OFAndroidObject {
 	private FloatBuffer pcloud_buffer;
 	private float[] pcloud_array;
 
+	private boolean enableAugmentedImages;
 
-	public void setup(int texId, final int width, final int height){
+
+	public void setup(int texId, final int width, final int height, int enableAugmentedImages){
 		Context context = OFAndroid.getContext();
+
+		if (enableAugmentedImages == 1) {
+			this.enableAugmentedImages = true;
+		} else {
+			this.enableAugmentedImages = false;
+		}
 
 
 		// boehm-e
@@ -112,6 +120,8 @@ public class ofxARCoreLib extends OFAndroidObject {
 
 
 		mTexId = texId;
+
+		final boolean _enableAugmentedImages = this.enableAugmentedImages;
 
 		((Activity)context).runOnUiThread(new Runnable() {
 			@Override
@@ -143,14 +153,17 @@ public class ofxARCoreLib extends OFAndroidObject {
 				}
 
 				// boehm-e AugmentedImageDatabase
-				AugmentedImageDatabase db = createAugmentedImageDatabase();
-				for (int i=0; i<db.getNumImages(); i++) {
-					float[] new_matrix = new float[20];
-					new_matrix[18] = i;
-					new_matrix[19] = 0; // NOT TRACKING
-					augImg_matrices.add(new_matrix);
+				if (_enableAugmentedImages == true) {
+					AugmentedImageDatabase db = createAugmentedImageDatabase();
+					for (int i=0; i<db.getNumImages(); i++) {
+						float[] new_matrix = new float[20];
+						new_matrix[18] = i;
+						new_matrix[19] = 0; // NOT TRACKING
+						augImg_matrices.add(new_matrix);
+					}
+					mDefaultConfig.setAugmentedImageDatabase(db);
 				}
-				mDefaultConfig.setAugmentedImageDatabase(db);
+
 				// boehm-e Set Auto Focus
 				mDefaultConfig.setFocusMode(Config.FocusMode.AUTO);
 
@@ -292,34 +305,35 @@ public class ofxARCoreLib extends OFAndroidObject {
 //			final float lightIntensity = frame.getLightEstimate().getPixelIntensity();
 
 			// AugmentedImageDatabase boehm-e
+			if (this.enableAugmentedImages == true) {
 
-			Collection<AugmentedImage> updatedAugmentedImages =
-					frame.getUpdatedTrackables(AugmentedImage.class);
+				Collection<AugmentedImage> updatedAugmentedImages =
+						frame.getUpdatedTrackables(AugmentedImage.class);
 
+				int index = 0;
+				for (AugmentedImage img : updatedAugmentedImages) {
+					if (img.getTrackingState() == TrackingState.TRACKING && img.getTrackingMethod() == AugmentedImage.TrackingMethod.FULL_TRACKING) {
+						String name = img.getName();
+						Pose pose = img.getCenterPose();
+						float width = img.getExtentX();
+						float height = img.getExtentZ();
+						float[] new_matrix = new float[20];
+						pose.toMatrix(new_matrix, 0);
+						new_matrix[16] = width;
+						new_matrix[17] = height;
+						new_matrix[18] = img.getIndex();
+						new_matrix[19] = 1; // tracking
+						augImg_matrices.set(img.getIndex(), new_matrix);
 
-			int index = 0;
-			for (AugmentedImage img : updatedAugmentedImages) {
-				if (img.getTrackingState() == TrackingState.TRACKING && img.getTrackingMethod() == AugmentedImage.TrackingMethod.FULL_TRACKING) {
-					String name = img.getName();
-					Pose pose = img.getCenterPose();
-					float width = img.getExtentX();
-					float height = img.getExtentZ();
-					float[] new_matrix = new float[20];
-					pose.toMatrix(new_matrix, 0);
-					new_matrix[16] = width;
-					new_matrix[17] = height;
-					new_matrix[18] = img.getIndex();
-					new_matrix[19] = 1; // tracking
-					augImg_matrices.set(img.getIndex(), new_matrix);
+					} else {
 
-				} else {
-
-					float[] new_matrix = new float[20];
-					new_matrix[18] = img.getIndex();
-					new_matrix[19] = 0; // NOT TRACKING
-					augImg_matrices.set(img.getIndex(), new_matrix);
+						float[] new_matrix = new float[20];
+						new_matrix[18] = img.getIndex();
+						new_matrix[19] = 0; // NOT TRACKING
+						augImg_matrices.set(img.getIndex(), new_matrix);
+					}
+					index++;
 				}
-				index++;
 			}
 
 

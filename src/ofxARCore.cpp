@@ -60,8 +60,9 @@ ofxARCore::~ofxARCore(){
     ofRemoveListener(ofxAndroidEvents().resume,this,&ofxARCore::resumeApp);
 }
 
-void ofxARCore::setup(){
+void ofxARCore::setup(bool enableAugmentedImages){
     _sessionInitialized = false;
+    this->enableAugmentedImages = enableAugmentedImages;
 
 
     std::string path = "AugmentedImageDatabase";
@@ -98,13 +99,13 @@ void ofxARCore::setupSession(){
     }
 
     JNIEnv *env = ofGetJNIEnv();
-    jmethodID javaSetupMethod = env->GetMethodID(javaClass, "setup", "(III)V");
+    jmethodID javaSetupMethod = env->GetMethodID(javaClass, "setup", "(IIII)V");
     if (!javaSetupMethod) {
         ofLogError("ofxARCore") << "setup(): couldn't get java setup for ofxARCore";
         return;
     }
 
-    env->CallVoidMethod(javaTango, javaSetupMethod, texId, ofGetWidth(), ofGetHeight());
+    env->CallVoidMethod(javaTango, javaSetupMethod, texId, ofGetWidth(), ofGetHeight(), this->enableAugmentedImages);
 
     _sessionInitialized = true;
 }
