@@ -1,14 +1,14 @@
 <a href="https://play.google.com/store/apps/details?id=cc.openframeworks.ardrawing">
-  <img src=".img/dl.png" width="200"/>
+<img src=".img/dl.png" width="200"/>
 </a>
 
 # ofxARCore
 Experimental addon for openFrameworks to use [ARCore](https://developers.google.com/ar) on Android devices.
 
-  <div style="position: relative; width: 90%; height: 100%; margin-left:5%; margin-right: 5%;display: flex; justify-content: center; float: left;">
-    <img align="left" src=".img/demo.gif" style="padding-left:1%; padding-right:1%" alt="Made with Angular" title="Angular"  width="45%" />
-    <img align="left" src=".img/demo.webp" style="padding-left:1%; padding-right:1%" alt="Made with Bootstrap" title="Bootstrap"  width="50%" />
-  </div>
+<div style="position: relative; width: 90%; height: 100%; margin-left:5%; margin-right: 5%;display: flex; justify-content: center; float: left;">
+<img align="left" src=".img/demo.gif" style="padding-left:1%; padding-right:1%" alt="Made with Angular" title="Angular"  width="45%" />
+<img align="left" src=".img/demo.webp" style="padding-left:1%; padding-right:1%" alt="Made with Bootstrap" title="Bootstrap"  width="50%" />
+</div>
 
 
 
@@ -47,19 +47,19 @@ void ofApp::update() {
 
 void RafalleApp::draw() {
 
-    for (int i = 0; i < anchors.size(); i++) {
+  for (int i = 0; i < anchors.size(); i++) {
 
-        ofMatrix4x4 anchor = anchors[i];
-        ofPushMatrix();
-        ofMultMatrix(anchor);
+    ofMatrix4x4 anchor = anchors[i];
+    ofPushMatrix();
+    ofMultMatrix(anchor);
 
-        ofDrawBox(ofVec3f(0,0,0), 0.05); // Draws a 5cm box at anchor location
+    ofDrawBox(ofVec3f(0,0,0), 0.05); // Draws a 5cm box at anchor location
 
-        ofPopMatrix();
-    }
+    ofPopMatrix();
+  }
 
 
-    ofDisableDepthTest();
+  ofDisableDepthTest();
 
 }
 
@@ -79,32 +79,32 @@ ofVbo vbo_pointcloud;
 // ofApp.cpp
 
 void ofApp::setup() {
-    for(int i = 0; i < point_cloud.size(); i++) {
-        point_color.push_back(ofColor::red);
-    }
-    vbo_pointcloud.setVertexData(&point_cloud[0], 3, 1000, GL_DYNAMIC_DRAW);
-    vbo_pointcloud.setColorData(&point_color[0], 1000, GL_DYNAMIC_DRAW);
-    point_color.clear();
+  for(int i = 0; i < point_cloud.size(); i++) {
+    point_color.push_back(ofColor::red);
+  }
+  vbo_pointcloud.setVertexData(&point_cloud[0], 3, 1000, GL_DYNAMIC_DRAW);
+  vbo_pointcloud.setColorData(&point_color[0], 1000, GL_DYNAMIC_DRAW);
+  point_color.clear();
 }
 
 void ofApp::update() {
-    point_cloud = arcore->getPointCloud();
-    if (point_cloud.size() > 1) {
-        for (int i = 0; i < point_cloud.size(); i++)
-            point_color.push_back(ofColor::red);
+  point_cloud = arcore->getPointCloud();
+  if (point_cloud.size() > 1) {
+    for (int i = 0; i < point_cloud.size(); i++)
+    point_color.push_back(ofColor::red);
 
-        vbo_pointcloud.updateVertexData(&point_cloud[0], (int) point_cloud.size() * 2);
-        vbo_pointcloud.updateColorData(&point_color[0], (int) point_color.size() * 2);
-    }
+    vbo_pointcloud.updateVertexData(&point_cloud[0], (int) point_cloud.size() * 2);
+    vbo_pointcloud.updateColorData(&point_color[0], (int) point_color.size() * 2);
+  }
 
-    for (int i = 0; i < point_cloud.size(); i+=3) {
-        ofVec3f pos(point_cloud[i], point_cloud[i+1], point_cloud[i+2]);
-        points.push_back(pos);
-    }
+  for (int i = 0; i < point_cloud.size(); i+=3) {
+    ofVec3f pos(point_cloud[i], point_cloud[i+1], point_cloud[i+2]);
+    points.push_back(pos);
+  }
 }
 
 for (int i = 0; i < points.size(); i+=3) {
-    ofDrawBox(points[i], 0.01); // Draws a 1cm box at each point of point cloud
+  ofDrawBox(points[i], 0.01); // Draws a 1cm box at each point of point cloud
 }
 
 ```
@@ -113,38 +113,57 @@ for (int i = 0; i < points.size(); i+=3) {
 ```cpp
 // ofApp.cpp
 
-void AugmentedImage::draw() {
+void ofApp::draw() {
 
-    vector<ofAugmentedImage*> augmented_images = arcore->getImageMatrices();
+  vector<ofAugmentedImage*> augmented_images = arcore->getImageMatrices();
 
-    // draw a box above each detected image
-    for (int i = 0; i < augmented_images.size(); i++) {
+  // draw a box above each detected image
+  for (int i = 0; i < augmented_images.size(); i++) {
 
-        if (augmented_images[i]->is_tracking == true) {
+    if (augmented_images[i]->is_tracking == true) {
 
-            // get AugmentedImage position
-            ofMatrix4x4 anchor = augmented_images[i]->matrix;
-            ofPushMatrix();
-            // translate to AugmentedImage position
-            ofMultMatrix(anchor);
+      // get AugmentedImage position
+      ofMatrix4x4 anchor = augmented_images[i]->matrix;
+      ofPushMatrix();
+      // translate to AugmentedImage position
+      ofMultMatrix(anchor);
 
-            ofBoxPrimitive box;
+      ofBoxPrimitive box;
 
-            // set box dimentions according to arcore image width estimation
-            box.set(augmented_images[i]->width, 0.01, augmented_images[i]->height);
-            box.setPosition(0,0,0);
+      // set box dimentions according to arcore image width estimation
+      box.set(augmented_images[i]->width, 0.01, augmented_images[i]->height);
+      box.setPosition(0,0,0);
 
-            // draw box above the image
-            box.draw();
+      // draw box above the image
+      box.draw();
 
 
-            ofPopMatrix();
-        }
+      ofPopMatrix();
     }
+  }
+
+}
+```
+
+### Hit testing
+
+```cpp
+
+void DrawApp::touchDown(int x, int y, int id) {
+
+  ofHitPose *hitPose = arcore->getHitPose(x, y);
+
+  if (pose != NULL) {
+    ofMatrix4x4 pose = hitPose->pose;
+    float distance   = hitPose->distance;
+  }
 
 }
 
 ```
+
+
+
 
 ### Utils
 #### Camera FOV

@@ -265,7 +265,31 @@ ofMatrix4x4 ofxARCore::getViewMatrix(){
     return m;
 }
 
-//ofMatrix4x4 ofxARCore::getImageMatrix(){
+
+// boehm-e | hit pose of
+ofHitPose *ofxARCore::getHitPose(int x, int y) {
+    JNIEnv *env = ofGetJNIEnv();
+    jfloatArray data = (jfloatArray) env->CallObjectMethod(javaTango,
+                                                           env->GetMethodID(javaClass,"hitTest","(II)[F"),
+                                                           x, y);
+    jboolean isCopy;
+    jfloat *body =  env->GetFloatArrayElements(data, &isCopy);
+
+
+    int hit_ok = body[17];
+    bool has_hit = hit_ok == 1;
+
+    if (has_hit == false) {
+        return NULL;
+    }
+    ofMatrix4x4 m;
+    m.set(body);
+    ofHitPose *pose = new ofHitPose{m, body[16]};
+    return pose;
+}
+
+
+// boehm-e | augmented images of
 std::vector<ofAugmentedImage*> ofxARCore::getImageMatrices(){
 
     std::vector<ofAugmentedImage*> matrices;

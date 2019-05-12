@@ -27,13 +27,18 @@
 #include "ofTexture.h"
 
 typedef struct ofAugmentedImage {
-    ofMatrix4x4 matrix;
-    float width;
-    float height;
-    int index;
-    bool is_tracking;
-    std::string name;
+	ofMatrix4x4 matrix;
+	float width;
+	float height;
+	int index;
+	bool is_tracking;
+	std::string name;
 } ofAugmentedImage;
+
+typedef struct ofHitPose {
+	ofMatrix4x4 matrix;
+	float distance;
+} ofHitPose;
 
 class ofxARCore : ofThread{
 
@@ -63,6 +68,7 @@ public:
 
     ofMatrix4x4 getViewMatrix();
     std::vector<ofAugmentedImage*> getImageMatrices();
+	ofHitPose *getHitPose(int x, int y);
     ofMatrix4x4 getProjectionMatrix(float near=0.1f, float far=100.0f);
 
     std::vector<float> getPointCloud();     /* get point cloud arcore */

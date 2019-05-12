@@ -34,6 +34,7 @@ import com.google.ar.core.AugmentedImage;
 import com.google.ar.core.AugmentedImageDatabase;
 import com.google.ar.core.Config;
 import com.google.ar.core.Frame;
+import com.google.ar.core.HitResult;
 import com.google.ar.core.Pose;
 import com.google.ar.core.Session;
 import com.google.ar.core.TrackingState;
@@ -56,6 +57,7 @@ import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 public class ofxARCoreLib extends OFAndroidObject {
 	private static final String TAG = "ofxARCoreLib";
@@ -79,9 +81,10 @@ public class ofxARCoreLib extends OFAndroidObject {
 
 	private Pose mPose;
 	private ArrayList<Anchor> mAnchors = new ArrayList<>();
+    private Frame frame = null;
 
 
-	// boehm-e
+    // boehm-e
 	public float horizontalAngle;
 	public float verticalAngle;
 	public float screenDpi;
@@ -271,12 +274,44 @@ public class ofxARCoreLib extends OFAndroidObject {
 		return String.format("%040x", new BigInteger(1, arg.getBytes(/*YOUR_CHARSET?*/)));
 	}
 
+	public float[] hitTest(int x, int y) {
+        float[] hitPose = new float[18];
+        hitPose[17] = 0; // no hit found
+
+        if (frame == null ) {
+            return hitPose;
+        }
+
+        List<HitResult> hits = frame.hitTest(x, y);
+        float minDist = 1000;
+        HitResult hit = null;
+        for (int i=0; i<hits.size(); i++) {
+            if (hits.get(i).getDistance() < minDist) {
+                minDist = hits.get(i).getDistance();
+                hit = hits.get(i);
+            }
+        }
+
+        if (hit != null) {
+            Log.d("DEBUG ANDROID", "DEBUG ANDROID " + String.valueOf(hit.getDistance()));
+            hit.getHitPose().toMatrix(hitPose, 0);
+            hitPose[16] = hit.getDistance(); // distance
+            hitPose[17] = 1;                 // hit found
+        } else {
+            Log.d("DEBUG ANDROID", "DEBUG ANDROID NO STRIKE");
+
+        }
+
+        return hitPose;
+    }
+
 	public void update(){
 		if(mSession == null) return;
 
-		Frame frame = null;
 		try {
 			frame = mSession.update();
+
+
 			if (frame.hasDisplayGeometryChanged()) {
 				mTextureUVTransformed.position(0);
 				frame.transformDisplayUvCoords(mTextureUV, mTextureUVTransformed);
