@@ -35,6 +35,7 @@ import com.google.ar.core.AugmentedImageDatabase;
 import com.google.ar.core.Config;
 import com.google.ar.core.Frame;
 import com.google.ar.core.HitResult;
+import com.google.ar.core.Plane;
 import com.google.ar.core.Pose;
 import com.google.ar.core.Session;
 import com.google.ar.core.TrackingState;
@@ -344,6 +345,14 @@ public class ofxARCoreLib extends OFAndroidObject {
 
 				Collection<AugmentedImage> updatedAugmentedImages =
 						frame.getUpdatedTrackables(AugmentedImage.class);
+
+
+                // FUTUR WORK WITH PLANES
+                // Collection<Plane> planes = frame.getUpdatedTrackables(Plane.class);
+                // for (Plane plane : planes) {
+                //   plane.getCenterPose();
+                //   plane.getPolygon();
+                // }
 
 				int index = 0;
 				for (AugmentedImage img : updatedAugmentedImages) {
