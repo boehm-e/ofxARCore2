@@ -6,8 +6,8 @@
 Experimental addon for openFrameworks to use [ARCore](https://developers.google.com/ar) on Android devices.
 
 <div style="position: relative; width: 90%; height: 100%; margin-left:5%; margin-right: 5%;display: flex; justify-content: center; float: left;">
-<img align="left" src=".img/demo.gif" style="padding-left:1%; padding-right:1%" alt="Made with Angular" title="Angular"  width="45%" />
-<img align="left" src=".img/demo.webp" style="padding-left:1%; padding-right:1%" alt="Made with Bootstrap" title="Bootstrap"  width="50%" />
+<img align="left" src=".img/demo.gif" style="padding-left:1%; padding-right:1%" width="45%" />
+<img align="left" src=".img/demo.webp" style="padding-left:1%; padding-right:1%" width="50%" />
 </div>
 
 
