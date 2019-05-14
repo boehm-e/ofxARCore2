@@ -3,7 +3,7 @@
 </a>
 
 # ofxARCore
-Experimental addon for openFrameworks to use [ARCore](https://developers.google.com/ar) on Android devices.
+Addon for openFrameworks to use [ARCore](https://developers.google.com/ar) on Android devices.
 
 <div style="position: relative; width: 90%; height: 100%; margin-left:5%; margin-right: 5%;display: flex; justify-content: center; float: left;">
 <img align="left" src=".img/demo.gif" style="padding-left:1%; padding-right:1%" width="45%" />
@@ -16,7 +16,12 @@ Experimental addon for openFrameworks to use [ARCore](https://developers.google.
 
 ## About
 This addon is based on the work of [HalfdanJ](https://github.com/HalfdanJ/).
-This is not an official Google product.
+I added these APIs :
+####- Point cloud
+####- Augmented Images
+####- Hit testing
+####- Planes
+
 
 ## Developer guide
 To use the addon, you need the development branch of openFrameworks from [github](http://github.com/openFrameworks/openFrameworks).  Follow the [Android Studio guide](https://github.com/openframeworks/openFrameworks/blob/master/docs/android_studio.md) to learn how to get started with openFrameworks and Android.
