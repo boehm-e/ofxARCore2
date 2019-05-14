@@ -17,10 +17,11 @@ Addon for openFrameworks to use [ARCore](https://developers.google.com/ar) on An
 ## About
 This addon is based on the work of [HalfdanJ](https://github.com/HalfdanJ/).
 I added these APIs :
-####- Point cloud
-####- Augmented Images
-####- Hit testing
-####- Planes
+
+### - Point cloud
+### - Augmented Images
+### - Hit testing
+### - Planes
 
 
 ## Developer guide
