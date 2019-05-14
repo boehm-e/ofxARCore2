@@ -40,6 +40,12 @@ typedef struct ofHitPose {
 	float distance;
 } ofHitPose;
 
+typedef struct ofARPlane {
+	ofMesh mesh;
+    ofPath path;
+	ofMatrix4x4 center;
+} ofARPlane;
+
 class ofxARCore : ofThread{
 
 public:
@@ -67,7 +73,8 @@ public:
     ofMatrix4x4 getAnchor(int i=0);
 
     ofMatrix4x4 getViewMatrix();
-    std::vector<ofAugmentedImage*> getImageMatrices();
+	std::vector<ofAugmentedImage*> getImageMatrices();
+	std::vector<ofARPlane *> getPlanes();
 	ofHitPose *getHitPose(int x, int y);
     ofMatrix4x4 getProjectionMatrix(float near=0.1f, float far=100.0f);
 

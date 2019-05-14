@@ -149,17 +149,57 @@ void ofApp::draw() {
 
 ```cpp
 
-void DrawApp::touchDown(int x, int y, int id) {
+void ofApp::touchDown(int x, int y, int id) {
 
   ofHitPose *hitPose = arcore->getHitPose(x, y);
 
   if (pose != NULL) {
     ofMatrix4x4 pose = hitPose->pose;
     float distance   = hitPose->distance;
+
+    // translate to the hit location
+    ofPushMatrix();
+    ofMultMatrix(pose);
+
+    // draw a box at the hit location
+    ofDrawBox(0,0,0, 0.1);
+
   }
 
 }
+```
 
+
+### Planes
+
+```cpp
+
+void ofApp::draw() {
+
+    vector<ofARPlane*> planes = arcore->getPlanes();
+
+    // for each plane
+    for (int i = 0; i < planes.size(); i++) {
+
+        // translate to it's center
+        ofARPlane *plane= planes[i];
+        ofPushMatrix();
+        ofMultMatrix(plane->center);
+
+        // draw a red box on it's center
+        ofSetColor(255,0,0,100);
+        ofDrawBox(0,0.025,0, 0.2, 0.05, 0.1);
+
+        // draw the plane
+        ofSetColor(0,255,0,100);
+        plane->mesh.draw();
+
+        // draw the path (contours)
+        ofSetColor(0,0,255,100);
+        plane->path.draw();
+
+        ofPopMatrix();
+    }
 ```
 
 

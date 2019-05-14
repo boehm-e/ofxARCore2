@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <types/ofPoint.h>
+#include <graphics/ofPath.h>
 #include "ofxARCore.h"
 #include "ofxAndroidUtils.h"
 
@@ -317,6 +319,54 @@ std::vector<ofAugmentedImage*> ofxARCore::getImageMatrices(){
 
     }
     return matrices;
+}
+
+
+// boehm-e | augmented images of
+std::vector<ofARPlane *> ofxARCore::getPlanes(){
+
+    std::vector<ofARPlane*> planes;
+
+    JNIEnv *env = ofGetJNIEnv();
+    jobjectArray objArray = (jobjectArray) env->CallObjectMethod(javaTango, env->GetMethodID(javaClass, "getPlanes", "()[[F"));
+
+    int arraySize = env->GetArrayLength(objArray);
+    for (int i=0; i < arraySize; i++)
+    {
+        jboolean isCopy;
+        jobject array = env->GetObjectArrayElement(objArray, i);
+
+        jfloat *body =  env->GetFloatArrayElements((jfloatArray)array, &isCopy);
+        ofMatrix4x4 m;
+        m.set(body);
+
+        ofMesh mesh;
+        ofPath path;
+
+        ofLog() << "DEBUG CPP PLANE " << env->GetArrayLength((jfloatArray )array) << std::endl;
+        for (int i=16; i<env->GetArrayLength((jfloatArray )array); i+=3) {
+//            if (i==16) {
+//                path.moveTo(body[i], body[i+1]);
+//            } else {
+//                path.lineTo(body[i], body[i+1]);
+//            }
+            mesh.addVertex(ofPoint(body[i], body[i+1], body[i+2]));
+//            mesh.addVertex(ofPoint(body[i+2], 0.0, body[i+3]));
+//            mesh.addVertex(m.getTranslation());
+//            mesh.addIndex(i-16);
+//            mesh.addIndex(i-15);
+//            mesh.addIndex(i-14);
+        }
+        for (int j=0; j<mesh.getVertices().size()-3; j++) {
+            mesh.addIndex(j);
+            mesh.addIndex(j+1);
+            mesh.addIndex(j+2);
+        }
+
+        planes.push_back(new ofARPlane{mesh, path,  m});
+
+    }
+    return planes;
 }
 
 ofMatrix4x4 ofxARCore::getProjectionMatrix(float near, float far){
