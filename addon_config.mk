@@ -15,10 +15,10 @@
 # and the PG will write to the console the kind of error and in which line it is
 
 meta:
-	ADDON_NAME = ofxARCore
-	ADDON_DESCRIPTION =
-	ADDON_AUTHOR = Jonas Jongejan
-	ADDON_TAGS = "ar"
+	ADDON_NAME = ofxARCore2
+	ADDON_DESCRIPTION = ARCore wrapper for openframeworks
+	ADDON_AUTHOR = Erwan BOEHM
+	ADDON_TAGS = "ar" "augmented reality" "arcore" "android"
 	# ADDON_URL = 
 
 common:
