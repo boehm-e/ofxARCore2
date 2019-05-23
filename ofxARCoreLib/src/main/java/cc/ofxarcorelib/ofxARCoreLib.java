@@ -31,6 +31,7 @@ import android.view.Surface;
 import android.widget.Toast;
 
 import com.google.ar.core.Anchor;
+import com.google.ar.core.AugmentedFace;
 import com.google.ar.core.AugmentedImage;
 import com.google.ar.core.AugmentedImageDatabase;
 import com.google.ar.core.Config;
@@ -64,6 +65,7 @@ import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.List;
 
 public class ofxARCoreLib extends OFAndroidObject {
@@ -144,6 +146,7 @@ public class ofxARCoreLib extends OFAndroidObject {
                 Context context = OFAndroid.getContext();
 
                 try {
+//                    mSession = new Session((Activity) context, EnumSet.of(Session.Feature.FRONT_CAMERA));
                     mSession = new Session((Activity) context);
 
                 } catch (UnavailableArcoreNotInstalledException e) {
@@ -166,6 +169,7 @@ public class ofxARCoreLib extends OFAndroidObject {
                     Toast.makeText(context, "This device does not support AR", Toast.LENGTH_LONG).show();
                     return;
                 }
+//                mDefaultConfig.setAugmentedFaceMode(Config.AugmentedFaceMode.MESH3D);
 
                 // boehm-e AugmentedImageDatabase
                 if (_enableAugmentedImages == true) {
@@ -178,6 +182,7 @@ public class ofxARCoreLib extends OFAndroidObject {
                     }
                     mDefaultConfig.setAugmentedImageDatabase(db);
                 }
+
 
                 // boehm-e Set Auto Focus
                 mDefaultConfig.setFocusMode(Config.FocusMode.AUTO);
@@ -248,6 +253,7 @@ public class ofxARCoreLib extends OFAndroidObject {
     public float[] getProjectionMatrix(float near, float far){
         if(mIsReady) {
             try {
+                Log.d("DEBUG PROJMAT", String.valueOf(far));
                 mSession.update().getCamera().getProjectionMatrix(mProjectionMatrix, 0, near, far);
             } catch (CameraNotAvailableException e) {
                 e.printStackTrace();
@@ -398,6 +404,9 @@ public class ofxARCoreLib extends OFAndroidObject {
 //			final float lightIntensity = frame.getLightEstimate().getPixelIntensity();
 
 
+            // augmented faces boehm-e
+//            Collection<AugmentedFace> faceList = mSession.getAllTrackables(AugmentedFace.class);
+//            Log.d("DEBUG FACE", String.valueOf(faceList.size()));
             // Plane detection boehm-e
             Collection<Plane> arcore_planes = frame.getUpdatedTrackables(Plane.class);
 
