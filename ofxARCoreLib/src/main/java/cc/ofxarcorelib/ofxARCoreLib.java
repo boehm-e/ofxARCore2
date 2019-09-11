@@ -316,7 +316,9 @@ public class ofxARCoreLib extends OFAndroidObject {
         for (int i=0; i<hits.size(); i++) {
             if (hits.get(i).getDistance() < minDist) {
                 minDist = hits.get(i).getDistance();
-                hit = hits.get(i);
+                if (hits.get(i).getTrackable() != null) {
+                    hit = hits.get(i);
+                }
             }
         }
 
@@ -508,8 +510,7 @@ public class ofxARCoreLib extends OFAndroidObject {
                     SizeF size = characteristics.get(CameraCharacteristics.SENSOR_INFO_PHYSICAL_SIZE);
                     float w = size.getWidth();
                     float h = size.getHeight();
-                    horizontalAngle = w;
-//					horizontalAngle = (float) (2*Math.atan(w/(maxFocus[0]*2)));
+                    horizontalAngle = -w/(maxFocus[0]*2);
                     verticalAngle = (float) (2*Math.atan(h/(maxFocus[0]*2)));
                     return;
                 }

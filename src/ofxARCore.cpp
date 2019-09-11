@@ -235,15 +235,20 @@ std::vector<float> ofxARCore::getPointCloud() {
 
 
 float ofxARCore::getDpi() {
+    ofLog() << "- - CRASH DEBUG 1" << std::endl;
 
     JNIEnv *env = ofGetJNIEnv();
     jmethodID javaGetDpiMethod = env->GetMethodID(javaClass,"getDPI","()F");
+    ofLog() << "- - CRASH DEBUG 2" << std::endl;
     if(!javaGetDpiMethod){
+        ofLog() << "- - CRASH DEBUG NO METHOD" << std::endl;
         ofLogError("javaGetDpiMethod ") << "javaGetDpiMethod (): couldn't get java";
         return false;
     }
+    ofLog() << "- - CRASH DEBUG 3" << std::endl;
     jfloat dpi = env->CallFloatMethod (javaTango, javaGetDpiMethod);
     ofLog() << "DPI " << dpi;
+    ofLog() << "- - CRASH DEBUG 4 dpi : " << dpi << std::endl;
 
     return dpi;
 
@@ -345,11 +350,11 @@ std::vector<ofARPlane *> ofxARCore::getPlanes(){
 
         ofLog() << "DEBUG CPP PLANE " << env->GetArrayLength((jfloatArray )array) << std::endl;
         for (int i=16; i<env->GetArrayLength((jfloatArray )array); i+=3) {
-//            if (i==16) {
-//                path.moveTo(body[i], body[i+1]);
-//            } else {
-//                path.lineTo(body[i], body[i+1]);
-//            }
+            if (i==16) {
+                path.moveTo(body[i], body[i+1]);
+            } else {
+                path.lineTo(body[i], body[i+1]);
+            }
             mesh.addVertex(ofPoint(body[i], body[i+1], body[i+2]));
 //            mesh.addVertex(ofPoint(body[i+2], 0.0, body[i+3]));
 //            mesh.addVertex(m.getTranslation());
